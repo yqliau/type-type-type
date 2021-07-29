@@ -4,7 +4,6 @@ import './App.scss';
 import Main from './Main';
 import Modal from './Modal';
 import Footer from './Footer';
-import firebase from './firebase';
 
 function App() {
   // define initial states:
@@ -18,10 +17,6 @@ function App() {
   // game states
   const [isCompleted, setIsCompleted] = useState(false);
   const [wpm, setWpm] = useState(0);
-  // leaderboard states
-  const [leaderArray, setLeaderArray] = useState([]);
-  const [isLeader, setIsLeader] = useState(false);
-  const [username, setUsername] = useState('');
 
   // network request to the quotes API
   useEffect(() => {
@@ -32,8 +27,8 @@ function App() {
         method: 'GET',
         dataResponse: 'json',
         params: {
-          minLength: '160',
-          maxLength: '220',
+          minLength: '20',
+          maxLength: '30',
           tags: 'famous-quotes',
         },
       })
@@ -57,7 +52,6 @@ function App() {
     setTimerStarted(false);
     setIsCompleted(false);
     setWpm(0);
-    setIsLeader(false);
   };
 
   // input handler
@@ -126,79 +120,6 @@ function App() {
     }
   }, [userInput, correctWordsArray, wordsArray]);
 
-  // ***************** LEADERBOARD MECHANIC *****************
-  useEffect(() => {
-    // initialize and define firebase database
-    const dbRef = firebase.database().ref();
-
-    dbRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      const arrayToSort = [];
-
-      // populate the array to be sorted by each person object in the database
-      for (let personKey in data) {
-        const newPersonObj = {
-          key: personKey,
-          name: data[personKey].name,
-          score: data[personKey].score,
-        };
-        arrayToSort.push(newPersonObj);
-      }
-
-      // sort the array of person objects in descending order of score
-      arrayToSort.sort((personA, personB) => personB.score - personA.score);
-
-      // set sorted array into state
-      setLeaderArray(arrayToSort);
-    });
-  }, []);
-
-  // check if user should be on the leaderboards
-  useEffect(() => {
-    // only perform check if game state is completed
-    if (isCompleted) {
-      // do a compare of the current wpm to all of the leader scores
-      for (let i in leaderArray) {
-        const leaderScore = leaderArray[i].score;
-
-        // set leader state to true if it beats any of the current leaders
-        if (wpm >= leaderScore && !isLeader) {
-          setIsLeader(true);
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wpm]); // needs to only be triggered by change in wpm state (which will stop changing when the game ends), otherwise will always set leader to true on every render
-
-  // handler for username submission
-  const handleUsername = (event) => {
-    setUsername(event.target.value);
-  };
-
-  // on username submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    // reference firebase database
-    const dbRef = firebase.database().ref();
-
-    // define new leader object
-    const newLeader = {
-      name: username,
-      score: wpm,
-    };
-    // push to the database
-    dbRef.push(newLeader);
-
-    // reference the key of the lowest-scoring leader, and remove it from the database
-    const keyToDelete = leaderArray[leaderArray.length - 1].key;
-    dbRef.child(keyToDelete).remove();
-
-    // clear username and unmounts the submission form from the virtual DOM
-    setUsername('');
-    setIsLeader(false);
-  };
-
   return (
     <div className="App">
       <header>
@@ -217,16 +138,7 @@ function App() {
       />
 
       {/* game completion modal */}
-      <Modal
-        isCompleted={isCompleted}
-        wpm={wpm}
-        isLeader={isLeader}
-        handleSubmit={handleSubmit}
-        handleUsername={handleUsername}
-        username={username}
-        leaderArray={leaderArray}
-        clearData={clearData}
-      />
+      <Modal isCompleted={isCompleted} wpm={wpm} clearData={clearData} />
 
       <Footer />
     </div>
