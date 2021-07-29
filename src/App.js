@@ -166,7 +166,7 @@ function App() {
         }
       }
     }
-  }, [wpm]); // determined on wpm change (to prevent discrepancy in render timing)
+  }, [wpm, isCompleted, isLeader, leaderArray]);
 
   // handler for username submission
   const handleUsername = (event) => {
