@@ -27,8 +27,8 @@ function App() {
         method: 'GET',
         dataResponse: 'json',
         params: {
-          minLength: '20',
-          maxLength: '30',
+          minLength: '160',
+          maxLength: '200',
           tags: 'famous-quotes',
         },
       })
