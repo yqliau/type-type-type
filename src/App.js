@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import './App.scss';
-// import Leaderboards from './Leaderboards';
+import Main from './Main';
+import Modal from './Modal';
+import Footer from './Footer';
 import firebase from './firebase';
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [wpm, setWpm] = useState(0);
   // leaderboard states
+  const [leaderArray, setLeaderArray] = useState([]);
   const [isLeader, setIsLeader] = useState(false);
   const [username, setUsername] = useState('');
 
@@ -29,8 +32,8 @@ function App() {
         method: 'GET',
         dataResponse: 'json',
         params: {
-          minLength: '150',
-          maxLength: '200',
+          minLength: '160',
+          maxLength: '220',
           tags: 'famous-quotes',
         },
       })
@@ -76,7 +79,7 @@ function App() {
     // start timer (ticks every second)
     if (timerStarted) {
       stopwatch = setInterval(() => {
-        setTimer((timer) => timer + 1); // WHY does this have to be a callback!!
+        setTimer((timer) => timer + 1);
       }, 1000);
     }
 
@@ -107,7 +110,7 @@ function App() {
     const isLastWord = wordsArray.length === 1;
     const currentWord = wordsArray[0];
 
-    // only consider as correct once a space is entered (unless it's the last word)
+    // only consider as correct once a space is entered, unless it's the last word
     if (userInput === (isLastWord ? currentWord : currentWord + ' ')) {
       // move the correctly typed word to the array of correct words
       setCorrectWordsArray(correctWordsArray.concat(currentWord));
@@ -122,8 +125,6 @@ function App() {
       }
     }
   }, [userInput, correctWordsArray, wordsArray]);
-
-  const [leaderArray, setLeaderArray] = useState([]);
 
   // ***************** LEADERBOARD MECHANIC *****************
   useEffect(() => {
@@ -161,12 +162,13 @@ function App() {
         const leaderScore = leaderArray[i].score;
 
         // set leader state to true if it beats any of the current leaders
-        if (wpm > leaderScore && !isLeader) {
+        if (wpm >= leaderScore && !isLeader) {
           setIsLeader(true);
         }
       }
     }
-  }, [wpm, isCompleted, isLeader, leaderArray]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wpm]); // needs to only be triggered by change in wpm state (which will stop changing when the game ends), otherwise will always set leader to true on every render
 
   // handler for username submission
   const handleUsername = (event) => {
@@ -204,110 +206,31 @@ function App() {
         <h2>Test your typing skills!</h2>
       </header>
 
-      <main>
-        <h3>Type the below quote. The timer will start once any key has been pressed.</h3>
-        <blockquote className="quote">
-          <span className="correct-words">{correctWordsArray.join(' ') + ' '}</span>
-          <span className="current-word">{wordsArray[0]}</span>
-          {' ' + wordsArray.slice(1).join(' ')}
-        </blockquote>
+      {/* main game, including quote and user input */}
+      <Main
+        wordsArray={wordsArray}
+        correctWordsArray={correctWordsArray}
+        handleChange={handleChange}
+        userInput={userInput}
+        timer={timer}
+        wpm={wpm}
+      />
 
-        <form onSubmit={(e) => e.preventDefault()}>
-          <label htmlFor="input-box">Enter text here:</label>
-          <input id="input-box" type="text" onChange={handleChange} value={userInput} />
-        </form>
+      {/* game completion modal */}
+      <Modal
+        isCompleted={isCompleted}
+        wpm={wpm}
+        isLeader={isLeader}
+        handleSubmit={handleSubmit}
+        handleUsername={handleUsername}
+        username={username}
+        leaderArray={leaderArray}
+        clearData={clearData}
+      />
 
-        <div className="stats">
-          <p>
-            {/* display time in minutes and seconds */}
-            Time: {Math.floor(timer / 60)}:{timer % 60 > 9 ? timer % 60 : '0' + (timer % 60)}
-          </p>
-          <p className="wpm">{wpm} words per minute (WPM)</p>
-        </div>
-      </main>
-
-      <aside className={isCompleted ? 'completed' : ''}>
-        <div className="inner-modal">
-          <p>
-            <span className="highlight">Nice!!</span> Your final score is{' '}
-            <span className="wpm">{wpm} WPM</span>!
-          </p>
-          {isLeader ? (
-            <div className="new-leader">
-              <p className="congrats">Congrats, you're a top 5 player!</p>
-              <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Enter your name to be added to the leaderboard:</label>
-                <input
-                  type="text"
-                  id="username"
-                  onChange={handleUsername}
-                  value={username}
-                  placeholder="Username"
-                />
-                <button>Submit</button>
-              </form>
-            </div>
-          ) : null}
-
-          {/* leaderboards */}
-          <div className="leaderboards">
-            <h2>Leaderboards</h2>
-            <ul className="leader-container">
-              <li className="leaderboard-header">
-                <p className="rank">Rank</p>
-                <p className="leader-name">Name</p>
-                <p>Score</p>
-              </li>
-              {leaderArray.map((personObj, index) => {
-                return (
-                  <li key={personObj.key}>
-                    <p className="rank">{index + 1}</p>
-                    {index + 1 === 1 ? (
-                      <p className="leader-name congrats">👑 {personObj.name} 👑</p>
-                    ) : (
-                      <p className="leader-name">{personObj.name}</p>
-                    )}
-
-                    <p>{personObj.score} WPM</p>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <button onClick={clearData}>Play again!!</button>
-        </div>
-      </aside>
-
-      <footer>
-        <p>
-          Quotes from the <a href="https://github.com/lukePeavey/quotable">Quoteable API</a>
-        </p>
-        <p>
-          Created at <a href="https://junocollege.com/">Juno College</a>
-        </p>
-        <p>
-          Photo by{' '}
-          <a href="https://unsplash.com/@markusspiske?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
-            Markus Spiske
-          </a>{' '}
-          on{' '}
-          <a href="https://unsplash.com/collections/9013734/rustic?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
-            Unsplash
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }
 
 export default App;
-
-// leaderboard mechanic
-
-// on game completion, compare the wpm to each leader on the leaderboard
-// if the wpm is greater than any one leader, prompt the user to enter their username
-// store username in state, and link to input form
-// upon submission:
-// -- push the username and the wpm to the database
-// -- retrieve the key of the lowest-scoring leader
-// -- remove the lowest-scorer from the database
