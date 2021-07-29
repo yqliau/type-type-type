@@ -1,0 +1,46 @@
+.new-leader {
+  margin-top: 15px;
+
+  input {
+    text-align: center;
+    border: 1px black solid;
+    padding: 3px 10px;
+  }
+
+  button {
+    margin-top: 5px;
+  }
+}
+
+.leaderboards {
+  h2 {
+    margin: 20px 0;
+    border-bottom: 2px black solid;
+  }
+
+  ul {
+    list-style: none;
+    margin-bottom: 20px;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+    text-align: left;
+    margin: 5px 0;
+
+    .rank {
+      text-align: right;
+    }
+
+    .leader-name {
+      text-align: center;
+    }
+  }
+
+  .leaderboard-header {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}

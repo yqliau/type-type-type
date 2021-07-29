@@ -1,0 +1,15 @@
+button {
+  font-family: 'Special Elite', serif;
+  background-color: gold;
+  border: none;
+  padding: 2px 10px;
+  font-size: 24px;
+  font-weight: bold;
+  transition: color 0.2s, background-color 0.2s;
+  width: 100%;
+
+  &:hover {
+    background-color: darkgoldenrod;
+    color: white;
+  }
+}

@@ -1,0 +1,22 @@
+footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: rgba(90, 90, 90, 0.719);
+  margin-top: auto;
+  width: 100%;
+
+  p {
+    font-size: 14px;
+    color: white;
+    padding: 2px;
+  }
+}
+
+a {
+  text-decoration: none;
+  font-family: 'Special Elite', serif;
+  font-weight: bold;
+  color: gold;
+  font-size: 15px;
+}

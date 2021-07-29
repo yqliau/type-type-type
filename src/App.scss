@@ -1,0 +1,156 @@
+@import 'styles/setup';
+@import 'styles/modals';
+@import 'styles/leaderboards';
+@import 'styles/buttons';
+@import 'styles/footer';
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Special+Elite&display=swap');
+
+body {
+  background-image: url(./assets/markus-spiske-3tbtq3oCQ1s-unsplash.jpg);
+  background-size: cover;
+  font-family: 'Merriweather', sans-serif;
+  text-align: center;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Special Elite', serif;
+}
+
+header {
+  padding: 6vh 0 0;
+  margin-bottom: auto;
+
+  h1 {
+    font-size: calc(3.5vw + 25px);
+    text-shadow: 5px 5px rgba(255, 217, 0, 0.432);
+  }
+
+  h2 {
+    font-size: calc(1vw + 15px);
+    padding-bottom: 5vh;
+  }
+}
+
+p {
+  font-size: 16px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // justify-content: center;
+  flex: 1 0 auto;
+
+  h3 {
+    font-size: calc(0.5vw + 14px);
+  }
+
+  .quote {
+    width: 80%;
+    max-width: 600px;
+    background: white;
+    padding: 40px;
+    border: 2px black solid;
+    box-shadow: rgba(36, 36, 36, 0.514) -13px 13px;
+    border-radius: 5px;
+
+    position: relative;
+  }
+
+  .quote::before {
+    position: absolute;
+    content: '“';
+    font-family: 'special elite', serif;
+    left: 5px;
+    top: 5px;
+    font-size: 80px;
+    text-shadow: 3px 3px rgba(0, 0, 0, 0.24);
+  }
+
+  .quote::after {
+    position: absolute;
+    content: '”';
+    font-family: 'special elite', serif;
+    right: 5px;
+    bottom: -45px;
+    font-size: 80px;
+    text-shadow: 3px 3px rgba(0, 0, 0, 0.24);
+  }
+
+  .correct-words {
+    color: rgb(14, 107, 14);
+    background-color: rgb(227, 248, 237);
+  }
+
+  .current-word {
+    text-decoration: underline;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+  margin: 20px 0;
+
+  input {
+    margin-top: 5px;
+    border: 2px solid black;
+    font-family: 'Merriweather', sans-serif;
+  }
+}
+
+.stats {
+  margin: 30px 0;
+  background: rgba(255, 255, 255, 0.514);
+  padding: 5px;
+
+  p {
+    margin: 5px;
+  }
+}
+
+.highlight {
+  font-family: 'Special Elite';
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.congrats {
+  font-weight: bold;
+  position: relative;
+  display: inline-block;
+  z-index: 10;
+  transition: background-color 0.2s;
+
+  &::before {
+    content: '';
+    width: 90%;
+    height: 50%;
+    background-color: rgba(255, 217, 0, 0.466);
+
+    position: absolute;
+    bottom: 0;
+    left: 5%;
+    z-index: -5;
+  }
+
+  &:hover::before {
+    background-color: rgba(184, 135, 11, 0.438);
+  }
+}
+
+.wpm {
+  font-weight: bold;
+  border-bottom: 2px black solid;
+}
