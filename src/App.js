@@ -118,12 +118,13 @@ function App() {
         setIsCompleted(true);
       }
     }
-  }, [userInput, correctWordsArray, wordsArray]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInput, correctWordsArray]);
 
   return (
     <div className="App">
       <header>
-        <h1>Typing Test</h1>
+        <h1>Typewriter</h1>
         <h2>Test your typing skills!</h2>
       </header>
 
